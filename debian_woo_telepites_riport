@@ -1,0 +1,37 @@
+A Vatera tesztrendszer beállítása mostanra eljutott odáig, hogy a Debianon már stabilan fut az alap rendszer.
+Feltettem az Apache-ot, a PHP-t és a MySQL-t, majd a WordPress-t a WooCommerce modullal együtt.
+Az elején az volt a fő gond, hogy a szerver csak az alap /var/www/html könyvtárból szolgált ki, ezért külön virtualhostot hoztam létre, ami a /var/www/vatera mappára mutat.
+Ezzel volt pár kör, mert a DocumentRootot eleinte nem vette figyelembe, a /html mappát preferálta, és mindig a Debian “It works” oldala jött be.
+A konfigurációt többször át kellett írni, a tabulálásokat, szóközöket és a formátumot is javítottam, mire végül az Apache rendesen elolvasta a fájlt.
+Virtualhost jelenleg:<VirtualHost *:80>
+    ServerAdmin admin@vatera.local
+    ServerName 81.0.106.236
+    DocumentRoot /var/www/vatera
+    <Directory /var/www/vatera>
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/vatera_error.log
+    CustomLog ${APACHE_LOG_DIR}/vatera_access.log combined
+</VirtualHost>
+Ezzel már tisztán a vatera mappából fut a kiszolgálás.
+A vatera.conf aktiválva van, a default site ki van kapcsolva.
+Ellenőriztem a configot több körben, mindig Syntax OK-t adott vissza, és végül a tesztoldal is betöltött, így biztos, hogy a jó DocumentRoot működik.
+
+A folyamat közben volt egy hosszabb elakadás, amikor a 80-as port nem engedte a kapcsolatot, ekkor írtam Csabinak, hogy nézze meg a tűzfalat.
+Amíg a portot nem engedélyezte a rendszergazda, addig a böngészőből sem lehetett elérni a szervert.
+Addig belső tesztet végeztem SSH-n keresztül, és csak a curl-lal tudtam megerősíteni, hogy az Apache helyben válaszol.
+Most, hogy ez tisztázódott, a szerver működik, de a portnyitás még mindig Csabi oldalán van, ez kell majd ahhoz, hogy a többiek is elérjék kívülről.
+
+A WordPress maga már feltelepült, beállítottam az adatbázist és az admin hozzáférést.
+Az alap rendszer tehát fut, de a publikus elérés és a bővítmények felrakása még hátra van.
+A cél most az, hogy a WooCommerce-t és a piactér logikát kibővítsük a Vatera specifikus modulokkal.
+
+A fő plugin stack a következő: Dokan Pro a több eladós piactérhez, WooCommerce Escrow / Mangopay a buyer protection és az escrow fizetéshez, WP Adverts a hirdetéses modulhoz, Paid Memberships Pro az előfizetésekhez, WP KYC Verification az eladói azonosításhoz, Data Exporter Pro és Vendor Report Manager a forgalmi és DAC7 riportokhoz, Woo Conditional Checkout Fields a buyer protection kapcsolóhoz, WooCommerce Fee Manager / Cart Fee Logic Pro a külön kezelhető díjakhoz, GLS és Foxpost integráció a szállításhoz, Metorik és Advanced Woo Reporting az analitikához, valamint a RankMath SEO, Elementor Pro, Fluent CRM és CookieYes GDPR a felülethez, levelezéshez és adatvédelemhez.
+
+Közben a helyi gépen is beállítottam egy WSL-es Debian környezetet, hogy lehessen fejleszteni és tesztelni anélkül, hogy mindig a VPS-hez kellene csatlakozni.
+Ez a rendszer már fut PowerShellből, és a localhostról elérhető, így párhuzamosan tudunk fejleszteni.
+
+A következő lépés a VPS-en a port 80 megnyitása, a Dokan és az Escrow modul aktiválása, majd a buyer protection logika és a KYC rendszer beállítása lesz.
+Utána jöhet a hirdetéses modul, az előfizetéses funkciók és a riportok összekapcsolása.
+Ezzel a környezettel most már lehet a funkcionális fejlesztést folytatni, az alap infrastruktúra kész és stabil.
