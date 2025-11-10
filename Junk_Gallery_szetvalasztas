@@ -1,0 +1,59 @@
+# Junk / Gallery szétválasztás – projektirány
+
+A cél, hogy a Vatera új rendszere két világra váljon szét:  
+**Junk (bazár / gyors hirdetés)** és **Gallery (piactér / buyer protection)**.
+
+A két ág ugyanazon motoron fut (Woo + DokanPro), de logikailag és vizuálisan külön kezeljük őket.  
+Nem adatbázis-szinten választjuk szét, hanem egy `segment` meta alapján:  
+minden termék `junk` vagy `gallery` címkét kap.
+
+### Fő irány
+
+- A vevő oldalon két külön aloldal van: `/junk` és `/gallery`.  
+  Mindkettő saját sablonon, saját szűrőkkel, de azonos adatbázisból dolgozik.  
+  A rendszer `segment` alapján szűri, mit listáz.
+- Az oldal alapból a **Junk** szegmensre dob, onnan lehet átváltani a **Gallery** nézetre.  
+  Nem lesz popup vagy kezdő választó.
+
+### Eladói oldal (Dokan)
+
+- A Dokan dashboardban két külön gomb:  
+  „Gyors hirdetés (Junk)” és „Piactéri eladás (Gallery)”.
+- Ezek a `segment` paramétert átadják (`?segment=junk` / `?segment=gallery`),  
+  így a feltöltőoldal tudja, melyik ágba kerül a termék.  
+- Mentéskor a `segment` meta rögzül, a terméklistában új oszlopban látszik is („Szegmens”).  
+- Később a riportok és szűrők is ezen a mezőn fognak működni.
+
+### Kategóriafa
+
+Egy közös kategóriafa marad minden termékhez, csak külön taxonómiában (`mp_category`).  
+Ez megakadályozza, hogy a két világ összemosódjon, miközben a keresések és szűrők azonosak maradnak.
+
+Mentéskor:
+- `mp_category` = pl. Háztartási gépek / Porszívók  
+- `segment` = junk vagy gallery
+
+### Megjelenítés
+
+- **Junk:** egyszerű, gyors, nagy képes, rövid leírásos bazár-felület.  
+- **Gallery:** strukturált, bizalmi piactér, specifikációval, buyer protection infóval.  
+
+A két nézet Elementorral vagy külön sablonnal (`archive-product-junk.php` / `archive-product-gallery.php`) megy.
+
+### Következő lépések
+
+1. Segment meta működésének ellenőrzése feltöltéskor.  
+2. Front-end szűrők bekötése a /junk és /gallery oldalakhoz.  
+3. Buyer protection logika csak a Gallery ágra.  
+4. MP automata feltöltés és AI termékleírás refaktorálása ehhez az irányhoz.
+
+---
+
+**Megjegyzés:**  
+Gyulával egyeztetve — a kezdőoldali választás kikerül, az oldal alapból a Junk-ra érkezik, és jól látható váltó lesz a két világ között.  
+Minden más irány elfogadva.
+
+---
+
+Attila Jáger  
+2025. november  
