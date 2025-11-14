@@ -1,0 +1,51 @@
+# Vatera – Feltöltő felület fejlesztés (Aukro mintára)
+
+**Cél:**  
+Az Aukro.hu egyszerű listázási oldal mintájára elkészíteni a WooCommerce + Dokan alapú termékfeltöltő UI-t, amely a „Vásárlás most” ágat valósítja meg.  
+A „Feladás +” gomb a jobb felső sarokban jelenik meg, és erre kattintva a felhasználó a Dokan új feltöltő oldalára jut.
+
+## Funkcionális követelmények
+
+- **Top menü / CTA:**  
+  Jobb felső sarokban „Feladás +” gomb (redirect `/dashboard/products/new`).
+
+- **Oldal struktúra:**  
+  Két TAB:  
+  - Aukció  
+  - Vásárlás most  
+  Jelenleg csak a *Vásárlás most* ág aktív, de az Aukció TAB is jelenjen meg.
+
+- **Űrlap mezők:**  
+  Az Aukro „Egyszerű listázás” mezőstruktúráját tükrözze.  
+  Minden mező jelenjen meg, akkor is, ha logikailag még nem működik.
+
+## Szállítási rész
+
+- Alap opció: „Engedem a személyes átvételt”  
+  - Mezők: irányítószám + város (utcanév/házszám nem szükséges)
+- Második blokk: „Szállítással kérem”
+  - Típusok: Külföldi (inaktív), Saját szállítás, Vaterás szállítás
+
+### Saját szállítás:
+- Szállítási módok listában: **GLS, Packeta, MPL, Foxpost**
+- Az ár mezőt az eladó tölti ki kézzel.
+- Méretfigyelmeztetés: „Maximális csomagméret: 50×50×50 cm”
+
+### Vaterás szállítás:
+- Fix ár, futárt mi adjuk, vásárlóvédelem aktív.
+- Későbbi buyer protection integrációhoz előkészítve.
+
+### Oversize termék opció:
+- Ha bejelölve, csak az oversize szállítási lehetőségek jelenjenek meg.
+
+## UI / Design
+
+- A teljes layout az Aukro vizuális mintáját kövesse.
+- A színek a Vaterafutár / Vatera arculathoz igazodjanak.
+- A Junk/Gallery váltó gomb vizuálisan hangsúlyosabb legyen.
+- Mobilon is reszponzív működés (grid 1 oszlopos bontásban).
+
+## Későbbi integrációk (előre jelzett)
+- Futár integrációk: [https://www.vaterafutar.hu/](https://www.vaterafutar.hu/)
+  - GLS, MPL, Packeta, EasyBox (később)
+- Futár státusz-visszajelzések (triggerpontok) – későbbi buyer protection flow-hoz.
