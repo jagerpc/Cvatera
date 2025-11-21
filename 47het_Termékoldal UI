@@ -1,0 +1,49 @@
+# Vatera – Termékoldal UI fejlesztés (Aukro minta alapján)
+
+**Cél:**  
+Az Aukro termékoldali elrendezésének (jobb oldali információs blokk és szállítási modul) megvalósítása WooCommerce + Dokan frontenden, a Vatera/Watera dizájnhoz igazítva.
+
+**Referencia:**  
+Lásd: `aukrominta.pdf` (jobb oldali panel mintája)
+
+---
+
+## Elkészült / folyamatban lévő funkciók
+
+### 1. Jobb oldali információs blokk
+- Termék neve, státusz (pl. „kicsomagolt”, „új”)  
+- Aktuális ár / licit rész és visszaszámlálás megjelenítése  
+- Licitálás, követés és kérdés funkciók külön gombokként  
+- Eladó adatai: név, értékelés, országzászló, hely  
+- Vásárlóvédelmi elemek megjelenítése:  
+  - „Biztonságos licitálás”  
+  - „Ellenőrzött eladó”  
+  - „Hogyan működik az aukció” linkekkel  
+
+### 2. Szállítási blokk (UI és struktúra)
+- Megjelent a *Szállítási beállítások* rész a termékoldalon.  
+- Alap opciók:
+  - **Normál méretű csomag / Oversized csomag**
+  - **Személyes átvétel** (irányítószám + város)
+  - **Vaterafutár** (alapértelmezett, a „saját futár” helyett)
+  - **Külföldi szállítás** (inaktív státusz)
+- Minden opcióhoz kis **ikon** társítva (pl. MPL, Packeta, GLS, Foxpost, EasyBox).  
+- A kiválasztott opcióhoz előugró **ár mező**, ahol az eladó megadhatja a szállítási díjat.
+- **Infó gombok** hozzáadva (kis „i” ikon) az egyes szállítási módokhoz, tooltipben leírással.
+
+### 3. Fizetés és szolgáltatások blokk
+- Aukro mintájú box: „Kártyás fizetés”, „Készpénz átvételkor”, „Vásárlóvédelem”.  
+- Ár és százalékos díj megjelenítése (pl. „150 Ft + 5%”).  
+- Ikonok: Visa, Mastercard, Apple Pay, Google Pay.
+
+---
+
+## További fejlesztések
+- Az egész oldal angolra fordítható Loco Translate segítségével.  
+- A jobb oldali információs panelek (szállítás, fizetés, eladó, vásárlóvédelem) modulárisan működnek, így később API-ról frissíthetők.  
+- A következő iterációban a futár API (vaterafutar.hu) bekötése következik, a státuszváltozásokkal és triggerpontokkal.
+
+---
+
+## Célkimenet
+A termékoldal kinézetében és funkcióban teljesen tükrözze az Aukro elrendezést, de a Vatera arculattal és a buyer protection logikával kiegészítve.
