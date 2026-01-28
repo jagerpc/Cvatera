@@ -1,0 +1,149 @@
+# Watera – Fejlesztési jelentés (2026. január 13–26.)
+## 4–5. hét fejlesztéseinek részletes összefoglalója
+
+---
+
+##  Áttekintés
+
+A 4. és 5. héten a fejlesztés fókusza két nagy területre koncentrált:
+1. **AI funkciók bevezetése és működő tesztverziók kialakítása** – szakértői PDF generálás és AI tanácsadó.
+2. **Dokan termékfeltöltő oldal teljes refaktorálása** – front-end felépítés és jövőbeni mentési logika előkészítése.
+
+A cél az volt, hogy a Dokan és az OpenAI integrációi működőképes, látható funkciókat kapjanak,  
+és meglegyen az alapja annak, hogy a későbbiekben enterprise-szintű adatkezelést és mentést lehessen ráépíteni.
+
+---
+
+##  4. hét – AI és OpenAI integrációs fejlesztések
+
+### 1. Google bejelentkezés
+- A Google loginhez kiválasztott plugin beállítása megkezdődött.  
+- A `usedprodw` Google Cloud Console-ban létrehozásra került a projekt.  
+- A bejelentkezés egyelőre **parkolópályán**, mivel a Google nem engedélyezi az IP-címre történő OAuth redirectet (domain kell hozzá).  
+- Az alap logika viszont elő van készítve, így amint domainünk lesz, a funkció aktiválható.
+
+---
+
+### 2. AI szakértői vélemény modul (AI termékértékelő)
+ **URL:** [http://81.0.106.236/termekszakerto/](http://81.0.106.236/termekszakerto/)
+
+- A modul célja, hogy egy feltöltött termékkép és megadott terméknév alapján a rendszer  
+  **szakértői leírást és értékelést** generáljon az adott tárgyról.  
+- A háttérben az OpenAI API működik: a beküldött terméknév + fotó alapján  
+  szöveges leírást készít, majd PDF-be menti és automatikusan letöltésre kínálja.  
+- Tesztelt minta: *„III. Károly dukát”* — az eredmény értelmezhető és valósághű, a magyar nyelvű generálás is jól működött.  
+
+**Technikai háttér:**
+- OpenAI API integráció (`gpt-4-turbo` modell).
+- PDF generálás `FPDF` → majd váltás `TCPDF`-re a magyar karakterkészlet támogatása miatt.
+- A generálás egyelőre nem kerül adatbázisba, de a következő sprintben az adatok mentése is megvalósul (user- és admin-hozzáféréssel).
+
+**Továbbfejlesztési terv:**
+- Generálások tárolása adatbázisban.  
+- Felhasználói elérés korábbi értékelésekhez.  
+- Admin oldali megjelenítés, szűrés és export.
+
+---
+
+### 3. AI tanácsadó (termékoldali chat)
+ **Teszt URL:** [http://81.0.106.236/termek/iii-karoly-dukat/](http://81.0.106.236/termek/iii-karoly-dukat/)
+
+- A termékoldalon a leírás alatt megjelent egy beépített **AI tanácsadó chatbox**,  
+  amely képes reagálni a felhasználó kérdéseire a termékről.
+- A jelenlegi verzió **egyszerű kérdés–válasz logikát** használ,  
+  minden kérdést önálló promptként kezel, még nem tart kontextust.
+- Az AI a terméknév és termékleírás alapján ad válaszokat,  
+  az egyéb háttérinformációt a modell saját tudásából egészíti ki.
+
+**Következő lépések:**
+- Beszélgetések mentése adatbázisba (user és admin oldalon egyaránt).  
+- Kontextuskezelés és válaszlánc logika kialakítása.  
+- Chat UI finomítása, mobilnézet optimalizálás.  
+
+---
+
+### 4. Termékfeltöltő oldal (első próbálkozás)
+- A Dokan alapértelmezett termékfeltöltő oldal vizuális és UX szinten túlterhelt volt.  
+- Dani elkezdte a mezők és blokkok újrarendezését JavaScript segítségével,  
+  de kiderült, hogy a Dokan DOM-felépítése miatt ez instabil megoldás.  
+- A cél: Dokan hookok segítségével, sablonfelülírással teljesen új front-endet építeni,  
+  nem JS átrendezéssel, hanem *native template override* megoldással.
+
+**Eredmény:** előkészített sablonok, amelyek az 5. héten kerültek integrálásra.
+
+---
+
+### 5. Technikai kihívások és hibajavítások
+- **MySQL korrupt adatbázis:**  
+  Lokális környezetben a MySQL szerver összeomlott, teljes helyreállítás (~3 óra).  
+- **PDF ékezet probléma:**  
+  Az FPDF nem kezelte jól a magyar karaktereket, ezért új PDF library (TCPDF) integrálva.  
+- **CSS hivatkozási hibák:**  
+  Lokálban jól működött, de a production környezetben rossz relatív útvonalak miatt eltért a megjelenés – javítva, most már egységes.  
+
+---
+
+##  5. hét – Dokan refaktorálás és UI átalakítás
+
+### 1. Teljes Dokan template override
+- A Dokan alapértelmezett termékfeltöltő és termékmódosító oldalait **teljesen felülírta**.  
+- Mostantól minden mező, logikai blokk és vizuális elem testre szabható.  
+- Ezzel megteremtődött az alapja annak, hogy később AI-generálás, licitálás, buyer protection és extra mezők is bekerüljenek.
+
+**Változások:**
+- Új dizájn: letisztultabb, átláthatóbb elrendezés.  
+- Képfeltöltő szekció kisebb lett, kevesebb helyet foglal.  
+- Leírás (short/long description) blokkok összehúzva, kevesebb tér, jobb UX.  
+- A funkciók továbbra is működnek, a termékek ugyanúgy megjelennek a Dokan dashboardon.  
+
+---
+
+### 2. Adatmentés és logikai fejlesztések (terv)
+- A következő sprintben Dani a mezők mentésének refaktorálását és  
+  az adatok Dokan dashboardban való megjelenítését tervezi.  
+- Ehhez ki kell alakítani a mentési hookokat (`dokan_new_product_added`, `dokan_update_product`),  
+  és biztosítani kell, hogy minden egyedi field (AI generálás, hirdetési idő, szállítás, buyer protection flag stb.)  
+  adatbázisban rögzül.  
+
+---
+
+### 3. AI modulok stabilizálása
+- Az AI tanácsadó és a szakértői PDF modul működik,  
+  de a 4. hétben fejlesztett funkciókat most már adatbázisra kell építeni,  
+  hogy a felhasználó korábbi lekérdezései és generálásai visszakereshetők legyenek.  
+- Ezzel a következő lépés az AI feature-ökből fizetős szolgáltatás formálása.
+
+---
+
+### 4. Fejlesztési irány a következő hetekre
+- AI adatok mentése és visszakeresés.  
+- Dokan termékmentés refaktor (hook + meta mentés).  
+- Buyer protection előkészítés a Vaterafutár API-ra.  
+- Licit modul aktiválása és tesztelése (Woo Simple Auctions).  
+- Google / Apple login aktiválása, ha a domain él.  
+
+---
+
+##  Összegzés
+
+| Terület | Eredmény / Állapot |
+|----------|--------------------|
+| **AI szakértői PDF** | Működő prototípus (generál, letölt, magyar ékezet fixálva) |
+| **AI tanácsadó (chat)** | Beépítve, működik, még nem kontextusos |
+| **Dokan termékfeltöltő** | Teljes template override, UI finomítva |
+| **Mentési logika** | Következő sprint feladata |
+| **Google login** | Technikai akadály (IP miatt), előkészítve domainre |
+| **Technikai hibák** | Javítva: DB crash, PDF encoding, CSS path |
+| **UI/UX szint** | Jelentősen javult, már modern, Aukro/Catawiki-szintű logika alapjai megvannak |
+
+---
+
+##  Készült
+**Időszak:** 2026. január 13–26.  
+
+
+---
+
+## 🧠 Megjegyzés
+A 4–5. heti fejlesztések lezárták a Watera platform első AI-integrációs és Dokan-strukturális szakaszát.  
+A rendszer most már stabil, testreszabható, és készen áll arra, hogy a licit, buyer protection és futár API modulokat fokozatosan integráljuk.
